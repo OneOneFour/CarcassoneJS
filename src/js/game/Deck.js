@@ -1,6 +1,6 @@
 import seedrandom from 'seedrandom';
 import Tile from './Tile';
-import { cleanverify_tile_templates } from './tile_defs/index';
+import { Base, cleanverify_tile_templates, River } from './tile_defs/index';
 
 function shuffled_arr_from_counts(counts,rng,offset){
     if(typeof rng === 'undefined'){
@@ -23,30 +23,40 @@ function shuffled_arr_from_counts(counts,rng,offset){
     return arr
 }
 
-function factory_from_template(key){
-    const clean_template = cleanverify_tile_templates(key)
+function factory_from_template(deck,key){
+    const clean_template = cleanverify_tile_templates(deck,key)
     // This may turn out to be **horribly inefficent** or maybe rather snappy - we shall see
-    let edge_template = {}; 
+    let vertex_template = {}; 
     let farm_to_cities = {};
     let bonus = new Set();
     let cloister = clean_template.cloister;
-    for(let [i,city] of clean_template.cities.entries()){
-        edge_template[`C${i}`] = city.edges
-        if(city.bonus) bonus.add(`C${i}`)
+
+    if(clean_template.cities){
+        for(let [i,city] of clean_template.cities.entries()){
+            vertex_template[`C${i}`] = city.vertices
+            if(city.bonus) bonus.add(`C${i}`)
+        }
     }
-    for(let [i,farm] of clean_template.farms.entries()){
-        edge_template[`F${i}`] = farm.edges
-        farm_to_cities[`F${i}`] = farm.cities.map( (x) => `C${x}`)
+    if(clean_template.farms){
+        for(let [i,farm] of clean_template.farms.entries()){
+            vertex_template[`F${i}`] = farm.vertices
+            if(farm.cities){
+                farm_to_cities[`F${i}`] = farm.cities.map( (x) => `C${x}`)
+            }
+
+        }
     }
-    for(let [i,road] of clean_template.road.entries()){
-        edge_template[`R${i}`] = road.edges
-        if(road.bonus) bonus.add(`R${i}`)
+    if(clean_template.roads){
+        for(let [i,road] of clean_template.roads.entries()){
+            vertex_template[`R${i}`] = road.vertices
+            if(road.bonus) bonus.add(`R${i}`)
+        }
     }
     if(clean_template.river){
-        edge_template[`Ri`] = clean_template.river
+        vertex_template[`Ri`] = clean_template.river
     }
     return function(){
-        return new Tile({edge_template,farm_to_cities,bonus,cloister})
+        return new Tile({vertices:vertex_template,farm_to_cities,bonus,cloister})
     }
 }
 
@@ -61,7 +71,7 @@ class Deck{
         this.rng = seedrandom(seed)
 
         //TODO: Move validator here -> Makes more sense only to validated requested tiles to prevent errors
-        this.unique_objects_defn_ = Object.keys(deck_template).map( x=> factory_from_template(x)) 
+        this.unique_objects_defn_ = Object.keys(deck_template).map( x=> factory_from_template(Base,x)) 
 
         this.deck = []
 
@@ -69,10 +79,10 @@ class Deck{
         this.deck = shuffled_arr_from_counts(counts,this.rng)
 
         if (typeof river_template !== 'undefined'){
-            var non_river_length = this.uniqueObjects.length
+            var non_river_length = this.unique_objects_defn_.length
             // TODO: 
-            this.uniqueObjects.push(...Object.keys(river_template).map(x=> factory_from_template(x)))
-            this.uniqueObjects.push(factory_from_template('F,F,Ri,F,Ri'))
+            this.unique_objects_defn_.push(...Object.keys(river_template).map(x=> factory_from_template(River,x)))
+            this.unique_objects_defn_.push(factory_from_template(River,'F,F,Ri,F,Ri'))
             counts = Object.values(river_template)
             let river = shuffled_arr_from_counts(counts,this.rng,non_river_length)
             river.splice(0,0,counts.length+non_river_length)
@@ -84,7 +94,7 @@ class Deck{
         return this.deck.left
     }
     next(){
-        return this.deck.pop()
+        return this.unique_objects_defn_[this.deck.pop()]()
     }
 }
 

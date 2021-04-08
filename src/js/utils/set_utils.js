@@ -34,9 +34,14 @@ function union(A,B){
     }
     return union_
 }
+
 const full_set = new Set([0,1,2,3,4,5,6,7,8,9,10,11])
 function remainder(assigned){
     return difference(full_set,assigned)
 }
 
-export {isSuperset,intersection,difference,union,remainder};
+function setsEqual(A,B){
+    return isSuperset(A,B) && isSuperset(B,A)
+}
+
+export {isSuperset,intersection,difference,union,remainder,setsEqual};
