@@ -27,13 +27,24 @@
             "cities":[0]
         }]
     },
-    "C,C,F,F,F":{
+    "C,C,F,F,C":{
         "cities":[{
             "vertices":[0,1,2,3,4,5]
         }],
         "farms":[{
             "vertices":"remain",
             "cities":[0]
+        }]
+    },
+    "C,C,F,F,F":{
+        "cities":[{
+            "vertices":[0,1,2]
+        },{
+            "vertices":[3,4,5]
+        }],
+        "farms":[{
+            "vertices":"remain",
+            "cities":[0,1]
         }]
     },
     "C,F,C,F,F":{
@@ -68,8 +79,7 @@
             "vertices":[3,11],
             "cities":[0]
         },{
-            "vertices":"remain",
-            "cities":[0]
+            "vertices":"remain"
         }]
     },
     "F,F,R,R,R":{

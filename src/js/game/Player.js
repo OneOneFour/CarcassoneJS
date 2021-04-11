@@ -7,7 +7,7 @@ class Meeple{
         this.x = x 
         this.y = y 
         this.sz =sz
-        this.players.splice(this.player.meeples.indexOf(this),1)
+        this.player.meeples.splice(this.player.meeples.indexOf(this),1)
     }
     reset(){
         delete this.x

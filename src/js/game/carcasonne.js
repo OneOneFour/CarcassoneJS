@@ -55,12 +55,13 @@ const Game = {
     },
     placeTile(x,y,tile_template,rotation){
         this.board.addTile(x,y,tile_template,rotation)
+        game_.turn +=1
         if(typeof game_.cb !== 'undefined') game_.cb()
     },
     placeMeeple(x,y,sz,meeple){
         const scorer = this.getScorer(x,y,sz)
         if(scorer.canAddMeeple(meeple)){
-            scorer.add_meeple(meeple)
+            scorer.addMeeple(meeple)
             meeple.set_pos(x,y,sz)
         }
     },

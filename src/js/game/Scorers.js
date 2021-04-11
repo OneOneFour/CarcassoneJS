@@ -50,10 +50,10 @@ class Scoreboard{
                     meeple.reset()
                 }
                 let largest_score = Math.max(...meeple_scores.values())
-                let winning_player = Array.from(meeple_scores.keys()).filter((k) => meeple_scores[k] == largest_score)
-                winning_player.forEach( player => this.scores.set(player, this.score.get(player) + s_score)) // Update their score
+                let winning_player = Array.from(meeple_scores.keys()).filter((k) => meeple_scores.get(k) == largest_score)
+                winning_player.forEach( player => this.scores.set(player, this.scores.get(player) + s_score)) // Update their score
 
-                this.completed_scorers.push(i)
+                this.completed_scorers.push(this.scorers_[i])
                 move_to_completed.push(i) // Remove at the end of the loop
             }
         }
@@ -92,6 +92,9 @@ class Scorer{
     }
     canAddMeeple(meeple){
         return this.meeples.filter( x=> x.player == meeple.player).length == 0
+    }
+    addMeeple(meeple){
+        this.meeples.push(meeple)
     }
 }
 
@@ -142,6 +145,7 @@ class Farm extends Scorer{
             const [x,y] = t.split(',').map(x=>parseInt(x))
             const t_cities = new Set(Array.from(sz_set).map( sz=> Game.getTile(x,y).farm_to_cities[sz]).filter( city => Boolean(city)).flat())
             if(t_cities.size == 0) continue; // Does not serve cities on this tile
+            console.log(t_cities)
             cities.add(...Array.from(t_cities).map( (city_sz) => Game.getScorer(x,y,city_sz))) 
         }
         return cities
@@ -158,9 +162,11 @@ class Road extends Scorer{
     } 
     get free_edges(){
         let count = 0;
-        for(let [t,sz] of this.tiles_.entries()){
+        for(let [t,sz_set] of this.tiles_.entries()){
             const [x,y] = t.split(',').map( x => parseInt(x) )
-            count += Game.board.getTileSZOpenEdges(x,y,sz)
+            for(let sz of sz_set.values()){
+                count += Game.board.getTileSZOpenEdges(x,y,sz)
+            }
         }
         return count;
     }

@@ -90,7 +90,7 @@ class TileTemplate{
         return this.szAtVertex(vertex,rotation).match(/[a-zA-Z]+/)[0]
     }
     szEdges(sz,rotation){
-        return new Set(Array.from(this.vertex_template[sz]).map( vertex => Math.floor( mod(vertex - rotation*3,12)/3)));
+        return new Set(Array.from(this.vertex_template[sz]).map( vertex => Math.floor( mod(vertex + rotation*3,12)/3)));
     }
 }
 class Tile{

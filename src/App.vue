@@ -1,15 +1,16 @@
 <template>
-  <div id="app">
     <h2>Carcassone!</h2>
     <game-div-canvas/>
-  </div>
+    <next-tile/>
+
 </template>
 
 <script>
 import GameDivCanvas from './components/GameDivCanvas.vue'
+import NextTile from './components/NextTile.vue'
 
 export default {
-  components: { GameDivCanvas },
+  components: { GameDivCanvas, NextTile },
   name: 'App',
 
 }
@@ -22,6 +23,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #b9c2cc;
-  margin-top: 60px;
+  display:flex;
+  flex-direction: column;
 }
 </style>

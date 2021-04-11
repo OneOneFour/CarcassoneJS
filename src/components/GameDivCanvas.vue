@@ -5,25 +5,7 @@
 </template>
 <script>
 import Game from '@/js/game/carcasonne'
-import CCFFC from '@/assets/2d_basic/CCFFC.png'
-import CCFFF from '@/assets/2d_basic/CCFFF.png'
-import CCRCC from '@/assets/2d_basic/CCRCC.png'
-import CFFFF from '@/assets/2d_basic/CFFFF.png'
-import CRFRR from '@/assets/2d_basic/CRFRR.png'
-import FCFCC from '@/assets/2d_basic/FCFCC.png'
-import FFFFCl from '@/assets/2d_basic/FFFFCl.png'
-import FFRRF from '@/assets/2d_basic/FFRRF.png'
-
-const lookup = {
-    'C,C,F,F,C':CCFFC,
-    'C,C,F,F,F':CCFFF,
-    'C,C,R,C,C':CCRCC,
-    'C,F,F,F,F':CFFFF,
-    'C,R,F,R,R':CRFRR,
-    'F,C,F,C,C':FCFCC,
-    'F,F,F,F,Cl':FFFFCl,
-    'F,F,R,R,F':FFRRF
-}
+import Graphics2D from '@/assets/2d_basic'
 
 export default {
     data:()=>({
@@ -58,7 +40,7 @@ export default {
         tileStyle(rawTile){
             if(typeof rawTile.template === 'undefined') return {}
             const {template,rotation,lx,ly} = rawTile
-            let backgroundImage = `url(${lookup[Game.getTemplate(template).key]})`
+            let backgroundImage = `url(${Graphics2D[Game.getTemplate(template).key]})`
             return {
                 backgroundImage,
                 transform:`rotate(${rotation * 90}deg)`,
