@@ -25,7 +25,7 @@ class Scoreboard{
         scorer_.add(t_x,t_y,sz)
         this.scorers_.push(scorer_)
     }
-    mergeScorer(parent,child){
+    mergeScorers(parent,child){
         let p_s = this.getScorer(parent.x,parent.y,parent.sz)
         let c_s = this.getScorer(child.x,child.y,child.sz)
         this.scorers_.splice(this.scorers_.indexOf(c_s),1) // delete from array #deleteurself
@@ -88,7 +88,7 @@ class Scorer{
                 this.tiles_.set(k,child.tiles_.get(k))
             }
         }
-        this.meeples(...child.meeples)
+        this.meeples.push(...child.meeples)
     }
     canAddMeeple(meeple){
         return this.meeples.filter( x=> x.player == meeple.player).length == 0
@@ -140,14 +140,14 @@ class Farm extends Scorer{
         let cities = new Set(); // Cities should be unique 
         for(let [t,sz_set] of this.tiles_.entries()){
             const [x,y] = t.split(',').map(x=>parseInt(x))
-            const t_cities = new Set(Array.from(sz_set).map( sz=> Game.getTile(x,y).farm_to_cities[sz]))
+            const t_cities = new Set(Array.from(sz_set).map( sz=> Game.getTile(x,y).farm_to_cities[sz]).filter( city => Boolean(city)).flat())
             if(t_cities.size == 0) continue; // Does not serve cities on this tile
-            cities.add(...Array.from(t_cities).map( (city_sz) => Game.getScorer(x,y,city_sz))) // TODO:FIX ME
+            cities.add(...Array.from(t_cities).map( (city_sz) => Game.getScorer(x,y,city_sz))) 
         }
         return cities
     }
     score(){
-        Array.from(this.servedCities()).filter(city => city.isComplete() ).length * 3 
+        return Array.from(this.servedCities()).filter(city => city.isComplete() ).length * 3 
     }
 
 }

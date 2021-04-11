@@ -5,11 +5,11 @@ import Game from './js/game/carcasonne';
 window.Game = Game;
 Game.startGame({
     deck_template:{
-        'F,F,F,F,Cl':2,
-        "C,F,F,F,F":2,
-        "F,C,C,F,C":2
+        'F,F,F,F,Cl':3,
+        "C,F,F,F,F":3,
+        "F,C,F,C,C":3,
     },
-    seed:'apricot',
+    seed:'robert',
     player_list:['robert'],
 })
 createApp(App).mount('#app')

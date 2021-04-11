@@ -1,12 +1,15 @@
 <template>
   <div id="app">
     <h2>Carcassone!</h2>
+    <game-div-canvas/>
   </div>
 </template>
 
 <script>
+import GameDivCanvas from './components/GameDivCanvas.vue'
 
 export default {
+  components: { GameDivCanvas },
   name: 'App',
 
 }
@@ -18,7 +21,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #b9c2cc;
   margin-top: 60px;
 }
 </style>

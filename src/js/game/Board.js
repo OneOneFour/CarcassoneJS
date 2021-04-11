@@ -10,29 +10,34 @@ class Board{
         this.size_ = maxdims
         // Stores game metadata => Conduit for all non map stuff to go via
     }
-    get(x,y){
+    get_raw(x,y){
         var local_x = Math.floor(x + this.origin_)
         var local_y = Math.floor(y + this.origin_)
         var item = this.map_[local_x + this.size_*local_y]
         return item
     }
+    get(x,y){
+        var item = this.get_raw(x,y)
+        if(typeof item === 'undefined') return; 
+        return Game.tileFromTemplate(item)
+    }
     neighbours(x,y){
         return [
-            this.get(x,y+1),
-            this.get(x+1,y),
             this.get(x,y-1),
+            this.get(x+1,y),
+            this.get(x,y+1),
             this.get(x-1,y)
         ]
     }
     fullNeighbours(x,y){
         return [
-            this.get(x-1,y+1),
-            this.get(x,y+1),
-            this.get(x+1,y+1),
-            this.get(x+1,y),
-            this.get(x+1,y-1),
-            this.get(x,y-1),
             this.get(x-1,y-1),
+            this.get(x,y-1),
+            this.get(x+1,y-1),
+            this.get(x+1,y),
+            this.get(x+1,y+1),
+            this.get(x,y+1),
+            this.get(x-1,y+1),
             this.get(x-1,y)
         ]
     }
@@ -46,6 +51,7 @@ class Board{
         ]
     }
     isValid(x,y,tile){
+        if(typeof this.get(x,y) !== 'undefined' ) return false;
         let edges = this.edgesAllowed(x,y)
         if(setsEqual(new Set('*'),new Set(edges))) return false;
         return edges.reduce((acc,cur,i) => acc && (tile.edges[i] == cur || cur == '*'),true)
@@ -60,9 +66,11 @@ class Board{
        const tile = this.get(x,y)
        if(typeof tile === 'undefined') throw RangeError("Querying Null tile -> I think something bad has happened")
        const edges = tile.szEdges(sz)
-       return this.neighbours(x,y).filter((v,i) => v == '*' && edges.has(i)).length
+       return this.edgesAllowed(x,y).filter((v,i) => v == '*' && edges.has(i)).length
     }
-    addTile(x,y,tile){
+    addTile(x,y,template,rotation,force=false){
+        const tile = Game.tileFromTemplate({template,rotation})
+        if(!this.isValid(x,y,tile) && !force) throw Error("Tile cannot be placed at this spot")
         const tile_handledsz = new Set();
         for(const [i,neighbour_pos] of [[x,y-1],[x+1,y],[x,y+1],[x-1,y]].entries()){
             const neighbour = this.get(...neighbour_pos)
@@ -77,7 +85,7 @@ class Board{
                     // Could check type here but **should** be compat via isValid method (which is faster)
                     if(tile_handledsz.has(origin_sz)){
                         // get neighbouring scorer
-                        Game.merge_scorers({x:x,y:y,sz:origin_sz},{x:neighbour_pos[0],y:neighbour_pos[1],sz:dest_sz})
+                        Game.mergeScorers({x:x,y:y,sz:origin_sz},{x:neighbour_pos[0],y:neighbour_pos[1],sz:dest_sz})
                     }else{
                         Game.getScorer(...neighbour_pos,dest_sz).add(x,y,origin_sz)
                     }
@@ -86,14 +94,17 @@ class Board{
                 }
             }
         }
-        const undealt = difference(new Set(Object.keys(tile.edges)),tile_handledsz);
-        let new_scorers = new Set(Array.from(undealt).map( v => tile.szAtVertex(parseInt(v))))
-        if(tile.cloister) new_scorers.add('Cl')
-        new_scorers.forEach(sz=> Game.addScorer(x,y,sz) )    
+
+        const undealt = difference(new Set(tile.scoringZones),tile_handledsz);
+        if(tile.cloister) undealt.add('Cl')
+        undealt.forEach(sz=> Game.addScorer(x,y,sz) )    
         
         var local_x = Math.floor(x + this.origin_)
         var local_y = Math.floor(y + this.origin_)
-        this.map_[local_x + this.size_*local_y] = tile
+        this.map_[local_x + this.size_*local_y] = {template,rotation}
+    }
+    get size(){
+        return this.size_
     }
 }
 
