@@ -11,9 +11,11 @@ Game.startGame({
         "C,C,F,F,F":2,
         "C,C,F,F,C":3,
         "C,R,F,R,R":2,
-        "C,C,R,C,C":2
+        "C,C,R,C,C":1
     },
     seed:'r',
     player_list:['robert'],
 })
+let player = Game.players[0]
+window.player = player
 createApp(App).mount('#app')

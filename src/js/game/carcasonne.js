@@ -3,6 +3,10 @@ import Deck from "./Deck";
 import Player from "./Player";
 import { Scoreboard } from "./Scorers";
 
+import mitt from 'mitt';
+const game_events = mitt();
+
+
 const game_ = {}
 
 const Game = {
@@ -56,25 +60,26 @@ const Game = {
     placeTile(x,y,tile_template,rotation){
         this.board.addTile(x,y,tile_template,rotation)
         game_.turn +=1
-        if(typeof game_.cb !== 'undefined') game_.cb()
+        game_events.emit('tile_placed',{x,y,tile_template,rotation})
     },
     placeMeeple(x,y,sz,meeple){
         const scorer = this.getScorer(x,y,sz)
         if(scorer.canAddMeeple(meeple)){
-            scorer.addMeeple(meeple)
             meeple.set_pos(x,y,sz)
         }
+        game_events.emit('meeple_placed',{x,y,sz,meeple})
     },
     get next(){
         return game_.deck.get(game_.turn)
     },
+    get left(){
+        return game_.deck.left(game_.turn)
+    },
     get scoreboard(){
         return game_.scoreboard
     },
-    setCallback(cb){
-        game_.cb = cb
-    }
 }
 Object.freeze(Game);
 export default Game;
+export {game_events};
 

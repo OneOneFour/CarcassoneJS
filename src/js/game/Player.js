@@ -7,13 +7,14 @@ class Meeple{
         this.x = x 
         this.y = y 
         this.sz =sz
-        this.player.meeples.splice(this.player.meeples.indexOf(this),1)
     }
     reset(){
         delete this.x
         delete this.y 
         delete this.sz 
-        this.player.meeples.push(this)
+    }
+    get free(){
+         return typeof this.sz === 'undefined'
     }
 }
 
@@ -21,13 +22,19 @@ class Player{
     constructor(name){
         this.name = name;
         this.color = 'red';// Automate this 
-        this.meeples = [new Meeple(this,2)]
+        this.meeples_ = [new Meeple(this,2)]
         for(let i = 1; i < 6; i++){
-            this.meeples.push(new Meeple(this,1))
+            this.meeples_.push(new Meeple(this,1))
         }
     }
     toString(){
         return this.name
+    }
+    get available_meeples(){
+        return this.meeples_.filter( (meeple) => meeple.free)
+    }
+    get placed_meeples(){
+        return this.meeples_.filter( (meeple) => !meeple.free)
     }
 }
 export default Player;

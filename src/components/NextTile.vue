@@ -4,18 +4,27 @@
             Next tile:  
         </span>
         <img :src=graphic class='next_tile_preview'/> 
-        <span>({{game.next}})</span>
+        <span>({{next}})</span>
     </div>
 </template>
 <script>
-import Game from '@/js/game/carcasonne'
 import Graphics2D from '@/assets/2d_basic'
-import { ref,computed } from 'vue'
+import Game, { game_events } from '@/js/game/carcasonne'
 export default {
-    setup(){
-        const game = ref(Game)
-        const graphic = computed(()=> Graphics2D[Game.getTemplate(game.value.next).key])
-        return {game,graphic}
+    data:()=>({
+        next:Game.next,
+        left:Game.left
+    }),
+    computed:{
+        graphic(){
+            return Graphics2D[Game.getTemplate(this.next).key]
+        }
+    },
+    mounted(){
+        game_events.on('tile_placed',()=>{
+            this.next = Game.next
+            this.left = Game.left
+        })
     }
 }
 </script>

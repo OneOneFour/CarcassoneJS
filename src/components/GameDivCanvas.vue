@@ -4,7 +4,7 @@
     </div>
 </template>
 <script>
-import Game from '@/js/game/carcasonne'
+import Game, { game_events } from '@/js/game/carcasonne'
 import Graphics2D from '@/assets/2d_basic'
 
 export default {
@@ -12,7 +12,10 @@ export default {
         cx:0,
         cy:0,
         div_size:128,
-        windowSize:{width:0,height:0},
+        windowSize:{
+                width:window.innerWidth,
+                height:window.innerHeight
+        },
         board:Game.board
     }),
     computed:{
@@ -58,11 +61,6 @@ export default {
                 height:window.innerHeight
             }
         })
-        this.windowSize = {
-                width:window.innerWidth,
-                height:window.innerHeight
-            }
-
         window.addEventListener('keydown',(event)=>{
             switch(event.key){
                 case 'ArrowLeft':
@@ -81,9 +79,7 @@ export default {
                     break;
             }
         })
-        Game.setCallback(()=>{
-            this.$forceUpdate();
-        })
+        game_events.on('tile_placed' , ()=>{this.$forceUpdate()});
     }
 }
 </script>

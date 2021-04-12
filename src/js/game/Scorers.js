@@ -10,13 +10,10 @@ class Scoreboard{
             this.scores.set(p,0);
         }
         this.scorers_ = []; // Store active scoring objects
-        this.completed_scorers = [];
     }
     getScorer(t_x,t_y,sz){
         for(let s of this.scorers_){
-            if(s.tiles_.has(format_x_y(t_x,t_y))){
-                if(s.tiles_.get(format_x_y(t_x,t_y)).has(sz)) return s 
-            }
+            if(s.check_xysz(t_x,t_y,sz)) return s
         }
     }
     addScorer(t_x,t_y,sz){
@@ -33,10 +30,9 @@ class Scoreboard{
 
     }
     updateScorers(){
-        let move_to_completed = [];
         for(let i =0; i < this.scorers_.length;i++){
             const s = this.scorers_[i]
-            if(s.isComplete()){
+            if(s.isComplete() && s.active ){
                 // Building complete, time to TALLY THE SCORES
                 // sum meeples
                 let s_score = s.score()
@@ -48,30 +44,38 @@ class Scoreboard{
                         meeple_scores.set(meeple.player,meeple.value)
                     }
                     meeple.reset()
+
                 }
                 let largest_score = Math.max(...meeple_scores.values())
                 let winning_player = Array.from(meeple_scores.keys()).filter((k) => meeple_scores.get(k) == largest_score)
                 winning_player.forEach( player => this.scores.set(player, this.scores.get(player) + s_score)) // Update their score
-
-                this.completed_scorers.push(this.scorers_[i])
-                move_to_completed.push(i) // Remove at the end of the loop
+                s.active = false;
             }
         }
-        move_to_completed.forEach( i=> this.scorers_.splice(i,1))
     }
 }
 
 class Scorer{
     constructor(){
         this.tiles_ = new Map();
-        this.meeples = []
+        this.active = true;
     }
     get(t_x,t_y){
         return this.tiles_.get(format_x_y(t_x,t_y))
     }
+    check_xysz(x,y,sz){
+        if(this.tiles_.has(format_x_y(x,y))){
+            return this.tiles_.get(format_x_y(x,y)).has(sz)
+        }
+        return false;
+    }
+    get meeples(){
+        return Game.players.flatMap( (player) => player.placed_meeples)
+                            .filter( (meeple) => this.check_xysz(meeple.x,meeple.y,meeple.sz) )
+    }
     add(t_x,t_y,sz){
         if(this.tiles_.has(format_x_y(t_x,t_y))){
-            this.tiles_[format_x_y(t_x,t_y)].add(sz)
+            this.tiles_.get(format_x_y(t_x,t_y).add(sz))
         }else{
             this.tiles_.set(format_x_y(t_x,t_y),new Set([sz]))
         }
@@ -88,13 +92,9 @@ class Scorer{
                 this.tiles_.set(k,child.tiles_.get(k))
             }
         }
-        this.meeples.push(...child.meeples)
     }
     canAddMeeple(meeple){
-        return this.meeples.filter( x=> x.player == meeple.player).length == 0
-    }
-    addMeeple(meeple){
-        this.meeples.push(meeple)
+        return (this.meeples.filter( x=> x.player == meeple.player).length == 0) && meeple.free
     }
 }
 
@@ -180,6 +180,9 @@ class Cloister extends Scorer{
     add(x,y){
         this.x = x 
         this.y = y 
+    }
+    check_xysz(x,y,sz){
+        return x == this.x && y == this.y && sz == 'Cl'
     }
     isComplete(){
         return this.neighbours == 8 

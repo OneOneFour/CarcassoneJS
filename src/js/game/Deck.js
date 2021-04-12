@@ -60,8 +60,8 @@ class Deck{
     getTemplate(idx){
         return this.unique_objects_defn_[idx]
     }
-    left(){
-        return this.deck.left
+    left(turn){
+        return this.deck.length - turn
     }
     get(turn){
         return this.deck[turn]
