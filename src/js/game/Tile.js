@@ -1,5 +1,22 @@
-import { mod } from "../utils/math_utils";
+import { flooredmedian, mod } from "../utils/math_utils";
 import {isSuperset,union,remainder} from '@/js/utils/set_utils';
+
+const point_lut = {
+    0:[0.15,0.15],
+    1:[0.5,0.15],
+    2:[0.85,0.15],
+    3:[0.85,0.15],
+    4:[0.85,0.5],
+    5:[0.85,0.85],
+    6:[0.85,0.85],
+    7:[0.5,0.85],
+    8:[0.15,0.85],
+    9:[0.15,0.85],
+    10:[0.15,0.5],
+    11:[0.15,0.15]
+}
+
+
 
 // Verify objects
 function cleanverify_tile_templates(set,key){
@@ -135,6 +152,20 @@ class Tile{
     }
     get scoringZones(){
         return Object.keys(this.template.vertex_template)
+    }
+    estimatePosition(sz){ // Gets rotated along with everything LOL
+        //TODO Move to template?
+        // Average x and y 
+        if(sz == 'Cl') return [0.5,0.5]
+        let vertices = this.template.vertex_template[sz]
+        let xs = [],ys = []
+        for(let vertex of vertices){
+            console.log(vertex,mod(vertex,12))
+            let [x,y] = point_lut[mod(vertex,12)]
+            xs.push(x)
+            ys.push(y)
+        }
+        return [flooredmedian(xs),flooredmedian(ys)]
     }
 }
 

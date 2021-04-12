@@ -146,7 +146,7 @@ class Farm extends Scorer{
             const t_cities = new Set(Array.from(sz_set).map( sz=> Game.getTile(x,y).farm_to_cities[sz]).filter( city => Boolean(city)).flat())
             if(t_cities.size == 0) continue; // Does not serve cities on this tile
             console.log(t_cities)
-            cities.add(...Array.from(t_cities).map( (city_sz) => Game.getScorer(x,y,city_sz))) 
+            cities.add(Array.from(t_cities).map( (city_sz) => Game.getScorer(x,y,city_sz))) 
         }
         return cities
     }
