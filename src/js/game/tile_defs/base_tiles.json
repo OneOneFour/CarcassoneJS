@@ -77,7 +77,8 @@
         }],
         "farms":[{
             "vertices":[3,11],
-            "cities":[0]
+            "cities":[0],
+            "meeplePos":[0.15,0.4]
         },{
             "vertices":"remain"
         }]

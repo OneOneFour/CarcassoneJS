@@ -1,6 +1,13 @@
 import { createApp } from 'vue'
+import firebase from 'firebase';
+import "firebase/database";
+import "firebase/analytics";
+
+import store from './stores';
 import App from './App.vue'
 import Game from './js/game/carcasonne';
+import vuetify from '@/plugins/vuetify';
+
 
 window.Game = Game;
 Game.startGame({
@@ -18,4 +25,19 @@ Game.startGame({
 })
 let player = Game.players[0]
 window.player = player
-createApp(App).mount('#app')
+createApp(App).use(store).use(vuetify).mount('#app')
+
+// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyA4cx2QCE5qw1DjJn4e4dDgUjp0WPEJZpU",
+    authDomain: "carcassonne-js.firebaseapp.com",
+    databaseURL: "https://carcassonne-js-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "carcassonne-js",
+    storageBucket: "carcassonne-js.appspot.com",
+    messagingSenderId: "365235067272",
+    appId: "1:365235067272:web:8ac6d25c630b8a96fe023d",
+    measurementId: "G-3FVLBTKM53"
+  };
+
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();

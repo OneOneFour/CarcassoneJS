@@ -63,9 +63,11 @@ function cleanverify_tile_templates(set,key){
 class TileTemplate{
     constructor(deck,key){
         const clean_template = cleanverify_tile_templates(deck,key)
+        
     // This may turn out to be **horribly inefficent** or maybe rather snappy - we shall see
         this.vertex_template = {}; 
         this.farm_to_cities = {};
+        this.meeplePosition = {};
         this.bonus = new Set();
         this.cloister = clean_template.cloister;
         this.key = key
@@ -73,7 +75,9 @@ class TileTemplate{
             for(let [i,city] of clean_template.cities.entries()){
                 this.vertex_template[`C${i}`] = city.vertices
                 if(city.bonus) this.bonus.add(`C${i}`)
+                if(city.meeplePosition) this.meeplePosition[`C${i}`] = city.meeplePosition
             }
+            
         }
         if(clean_template.farms){
             for(let [i,farm] of clean_template.farms.entries()){
@@ -81,6 +85,7 @@ class TileTemplate{
                 if(farm.cities){
                     this.farm_to_cities[`F${i}`] = farm.cities.map( (x) => `C${x}`)
                 }
+                if(farm.meeplePosition) this.meeplePosition[`F${i}`] = farm.meeplePosition
 
             }
         }
@@ -156,6 +161,7 @@ class Tile{
     estimatePosition(sz){ // Gets rotated along with everything LOL
         //TODO Move to template?
         // Average x and y 
+        if(sz in this.template.meeplePosition) return this.template.meeplePosition[sz]
         if(sz == 'Cl') return [0.5,0.5]
         let vertices = this.template.vertex_template[sz]
         let xs = [],ys = []
