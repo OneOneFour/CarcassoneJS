@@ -5,14 +5,14 @@
 </template>
 
 <script>
-import GameDivCanvas from './components/GameDivCanvas.vue'
-import NextTile from './components/NextTile.vue'
+import GameDivCanvas from './components/GameDivCanvas.vue';
+import NextTile from './components/NextTile.vue';
 
 export default {
   components: { GameDivCanvas, NextTile },
-  name: 'GameScreen'
+  name: 'GameScreen',
 
-}
+};
 </script>
 
 <style>

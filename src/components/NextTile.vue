@@ -1,32 +1,33 @@
 <template>
     <div class="next_tile_section">
         <span>
-            Next tile:  
+            Next tile:
         </span>
-        <img :src=graphic class='next_tile_preview'/> 
+        <img :src=graphic class='next_tile_preview'/>
         <span>({{next}})</span>
     </div>
 </template>
 <script>
-import Graphics2D from '@/assets/2d_basic'
-import Game, { game_events } from '@/js/game/carcasonne'
+import Graphics2D from '@/assets/2d_basic';
+import Game, { game_events } from '@/js/game/carcasonne';
+
 export default {
-    data:()=>({
-        next:Game.next,
-        left:Game.left
-    }),
-    computed:{
-        graphic(){
-            return Graphics2D[Game.getTemplate(this.next).key]
-        }
+  data: () => ({
+    next: Game.next,
+    left: Game.left,
+  }),
+  computed: {
+    graphic() {
+      return Graphics2D[Game.getTemplate(this.next).key];
     },
-    mounted(){
-        game_events.on('tile_placed',()=>{
-            this.next = Game.next
-            this.left = Game.left
-        })
-    }
-}
+  },
+  mounted() {
+    game_events.on('tile_placed', () => {
+      this.next = Game.next;
+      this.left = Game.left;
+    });
+  },
+};
 </script>
 <style>
 .next_tile_section{

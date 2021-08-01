@@ -1,47 +1,44 @@
-function isSuperset(set,subset){
-    for(let elem of subset){
-        if(!set.has(elem)){
-            return false;
-        }
+function isSuperset(set, subset) {
+  return [...subset].reduce((acc, cur) => set.has(cur) && acc,
+    true);
+}
+function intersection(A, B) {
+  const int = new Set();
+  [...B].forEach((elem) => {
+    if (A.has(elem)) {
+      int.add(elem);
     }
-    return true;
+  });
+
+  return int;
 }
-function intersection(A,B){
-    let int_ =new Set()
-    for(let elem of B){
-        if(A.has(elem)){
-            int_.add(elem)
-        }
+function difference(A, B) {
+  // Calculates difference between set A and B
+  const diff = new Set(A);
+  [...B].forEach((elem) => {
+    if (A.has(elem)) {
+      diff.delete(elem);
     }
-    return int_
-
+  });
+  return diff;
 }
-function difference(A,B){ 
-    // Calculates difference between set A and B 
-    let diff_ = new Set(A);
-    for(let elem of B){
-        if(A.has(elem)){
-            diff_.delete(elem)
-        }
-    }
-    return diff_
-
-}
-function union(A,B){
-    let union_ = new Set(A);
-    for(let elem of B){
-        union_.add(elem)
-    }
-    return union_
+function union(A, B) {
+  const uni = new Set(A);
+  [...B].forEach((elem) => {
+    uni.add(elem);
+  });
+  return uni;
 }
 
-const full_set = new Set([0,1,2,3,4,5,6,7,8,9,10,11])
-function remainder(assigned){
-    return difference(full_set,assigned)
+const fullSet = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+function remainder(assigned) {
+  return difference(fullSet, assigned);
 }
 
-function setsEqual(A,B){
-    return isSuperset(A,B) && isSuperset(B,A)
+function setsEqual(A, B) {
+  return isSuperset(A, B) && isSuperset(B, A);
 }
 
-export {isSuperset,intersection,difference,union,remainder,setsEqual};
+export {
+  isSuperset, intersection, difference, union, remainder, setsEqual,
+};
